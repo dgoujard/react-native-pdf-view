@@ -3,19 +3,13 @@ package com.keyee.pdfview;
 import java.io.File;
 
 import android.content.Context;
-import android.view.ViewGroup;
 import android.util.Log;
 import android.graphics.PointF;
+import android.widget.Toast;
 
-import com.github.barteksc.pdfviewer.PDFView;
-import com.github.barteksc.pdfviewer.listener.OnPageChangeListener;
-import com.github.barteksc.pdfviewer.listener.OnLoadCompleteListener;
-
-/*
 import com.joanzapata.pdfview.PDFView;
 import com.joanzapata.pdfview.listener.OnPageChangeListener;
 import com.joanzapata.pdfview.listener.OnLoadCompleteListener;
-*/
 
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -29,13 +23,14 @@ import com.facebook.react.uimanager.events.RCTEventEmitter;
 import com.facebook.react.common.MapBuilder;
 
 import static java.lang.String.format;
-import java.lang.ClassCastException;
 
 public class PDFViewManager extends SimpleViewManager<PDFView> implements OnPageChangeListener,OnLoadCompleteListener {
     private static final String REACT_CLASS = "RCTPDFViewAndroid";
     private Context context;
     private PDFView pdfView;
-    Integer pageNumber = 0;
+    private Toast t;
+    private Integer previousPageNumber;
+    Integer pageNumber = 1;
     String assetName;
     String filePath;
 
@@ -53,16 +48,6 @@ public class PDFViewManager extends SimpleViewManager<PDFView> implements OnPage
     public PDFView createViewInstance(ThemedReactContext context) {
         if (pdfView == null){
             pdfView = new PDFView(context, null);
-        } else {
-          /* #39 check parent and remove self from parent */
-          try {
-            final ViewGroup parentView = (ViewGroup) pdfView.getParent();
-            if (parentView != null) {
-              parentView.removeView(pdfView);
-            }
-          } catch (ClassCastException e) {
-            showLog("does not has a parent");
-          }
         }
         return pdfView;
         //return new PDFView(context, null);
@@ -70,8 +55,14 @@ public class PDFViewManager extends SimpleViewManager<PDFView> implements OnPage
 
     @Override
     public void onPageChanged(int page, int pageCount) {
+        if (previousPageNumber == null) {
+            previousPageNumber = page;
+        }
+        if (previousPageNumber != page) {
+            previousPageNumber = page;
+            showLog(format("%s / %s", page, pageCount));
+        }
         pageNumber = page;
-        showLog(format("%s %s / %s", filePath, page, pageCount));
     }
 
     @Override
@@ -89,11 +80,10 @@ public class PDFViewManager extends SimpleViewManager<PDFView> implements OnPage
     private void display(boolean jumpToFirstPage) {
         if (jumpToFirstPage)
             pageNumber = 1;
-        showLog(format("display %s %s", filePath, pageNumber));
         if (assetName != null) {
             pdfView.fromAsset(assetName)
                 .defaultPage(pageNumber)
-                //.swipeVertical(true)
+                .swipeVertical(true)
                 .onPageChange(this)
                 .onLoad(this)
                 .load();
@@ -105,7 +95,7 @@ public class PDFViewManager extends SimpleViewManager<PDFView> implements OnPage
                 .defaultPage(pageNumber)
                 //.showMinimap(false)
                 //.enableSwipe(true)
-                //.swipeVertical(true)
+                .swipeVertical(true)
                 .onPageChange(this)
                 .onLoad(this)
                 .load();
@@ -121,7 +111,7 @@ public class PDFViewManager extends SimpleViewManager<PDFView> implements OnPage
     @ReactProp(name = "pageNumber")
     public void setPageNumber(PDFView view, Integer pageNum) {
         //view.setPageNumber(pageNum);
-        if (pageNum >= 0){
+        if (pageNum > 0){
             pageNumber = pageNum;
             display(false);
         }
@@ -130,14 +120,14 @@ public class PDFViewManager extends SimpleViewManager<PDFView> implements OnPage
     @ReactProp(name = "path")
     public void setPath(PDFView view, String pth) {
         filePath = pth;
-        display(false);
+        display(true);
     }
 
     @ReactProp(name = "src")
     public void setSrc(PDFView view, String src) {
         //view.setSource(src);
         filePath = src;
-        display(false);
+        display(true);
     }
 
     @ReactProp(name = "zoom")
@@ -147,6 +137,10 @@ public class PDFViewManager extends SimpleViewManager<PDFView> implements OnPage
     }
 
     private void showLog(final String str) {
-        Log.w(REACT_CLASS, str);
+       if (t != null) {
+        t.cancel();
+        }
+        t = Toast.makeText(context, str, Toast.LENGTH_SHORT);
+        t.show();
     }
 }
