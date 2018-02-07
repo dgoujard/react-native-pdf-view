@@ -16,6 +16,9 @@
     "pdf",
     "view"
   ],
+  "devDependencies": {
+    "prop-types": "^15.6.0"
+  },
   "author": {
     "name": "cnjon",
     "url": "https://github.com/cnjon"
