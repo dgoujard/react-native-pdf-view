@@ -1,7 +1,6 @@
 'use strict';
 import React,{ Component } from 'react';
-import { requireNativeComponent, View } from 'react-native';
-import PropTypes from 'prop-types';
+import { requireNativeComponent, View, ViewPropTypes } from 'react-native';
 
 class PDFView extends Component {
   constructor(props) {
@@ -23,12 +22,12 @@ class PDFView extends Component {
 }
 
 PDFView.propTypes = {
-  ...View.propTypes,
-  src: PropTypes.string,
-  path: PropTypes.string,
-  pageNumber: PropTypes.number,
-  zoom: PropTypes.number,
-  onLoadComplete: PropTypes.func
+  ...ViewPropTypes,
+  src: ViewPropTypes.string,
+  path: ViewPropTypes.string,
+  pageNumber: ViewPropTypes.number,
+  zoom: ViewPropTypes.number,
+  onLoadComplete: ViewPropTypes.func
 };
 
 //var PDFCustomView = requireNativeComponent('RNPDFView', null);
