@@ -1,6 +1,7 @@
 'use strict';
-import React,{ Component } from 'react';
-import { requireNativeComponent, View, ViewPropTypes} from 'react-native';
+import React, { Component } from 'react';
+import { requireNativeComponent, View, ViewPropTypes } from 'react-native';
+import PropTypes from 'prop-types';
 const vPropTypes = ViewPropTypes || View.propTypes;
 class PDFView extends Component {
   constructor(props) {
@@ -12,27 +13,27 @@ class PDFView extends Component {
     this._root.setNativeProps(nativeProps);
   }
 
-  _onChange(event:Event) {
+  _onChange(event: Event) {
     this.props.onLoadComplete && this.props.onLoadComplete(Number(event.nativeEvent.message));
   }
 
   render() {
-    return <PDFCustomView ref={component => this._root = component} {...this.props} onChange={this._onChange}/>;
+    return <PDFCustomView ref={component => this._root = component} {...this.props} onChange={this._onChange} />;
   }
 }
 
 PDFView.propTypes = {
   ...vPropTypes,
-    asset: vPropTypes.string,
-    src: vPropTypes.string,
-    pageNumber: vPropTypes.number,
-    path: vPropTypes.string,
-    zoom: vPropTypes.number,
-    onLoadComplete: vPropTypes.func
+  asset: PropTypes.string,
+  src: PropTypes.string,
+  pageNumber: PropTypes.number,
+  path: PropTypes.string,
+  zoom: PropTypes.number,
+  onLoadComplete: PropTypes.func
 };
 
 var PDFCustomView = requireNativeComponent('RCTPDFViewAndroid', PDFView, {
-  nativeOnly: {onChange: true}
+  nativeOnly: { onChange: true }
 });
 
 export default PDFView;
