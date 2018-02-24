@@ -57,7 +57,7 @@
     NSLog(@"null path");
   } else {
     NSLog(@"not null: %@", self.path);
-  
+
     NSURL *pdfURL = [NSURL fileURLWithPath:self.path];
     _pdf = CGPDFDocumentCreateWithURL( (__bridge CFURLRef) pdfURL );
     _numberOfPages = (int)CGPDFDocumentGetNumberOfPages( _pdf );
@@ -72,7 +72,9 @@
     
     _pdfScrollView = [[PDFScrollView alloc] initWithFrame:self.bounds];
     _pdfScrollView.PDFScale = 1;
-    [_pdfScrollView setPDFPage:_page];
+      [_pdfScrollView setBounces:false];
+      [_pdfScrollView setMinimumZoomScale:1];
+      [_pdfScrollView setPDFPage:_page];
     [self addSubview:_pdfScrollView];
   }
 }
@@ -92,6 +94,16 @@
     _path = [src copy];
     [self reloadPdf];
   }
+}
+
+- (void)setAsset:(NSString *)asset
+{
+    asset = [[NSBundle mainBundle] pathForResource:asset ofType:@"pdf"]; //you can also use PDF files
+
+    if (![asset isEqual:_path]) {
+        _path = [asset copy];
+        [self reloadPdf];
+    }
 }
 
 - (void)setPath:(NSString *)path

@@ -15,6 +15,7 @@
 
 @property(nonatomic, strong) NSString *src;
 @property(nonatomic, strong) NSString *path;
+@property(nonatomic, strong) NSString *asset;
 @property(nonatomic, strong) NSNumber *pageNumber;
 @property(nonatomic, strong) NSNumber *zoom;
 
