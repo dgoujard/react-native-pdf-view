@@ -73,7 +73,7 @@
     _pdfScrollView = [[PDFScrollView alloc] initWithFrame:self.bounds];
     _pdfScrollView.PDFScale = 1;
       [_pdfScrollView setBounces:false];
-      [_pdfScrollView setMinimumZoomScale:1];
+     // [_pdfScrollView setMinimumZoomScale:1];
       [_pdfScrollView setPDFPage:_page];
     [self addSubview:_pdfScrollView];
   }
